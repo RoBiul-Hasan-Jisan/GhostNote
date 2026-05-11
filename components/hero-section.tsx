@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ANIMATION_DURATION } from '@/lib/constants';
 
@@ -9,7 +10,7 @@ interface HeroSectionProps {
   onCreateClick: () => void;
 }
 
-const SLOGAN_WORDS = ['Anonymous', 'Authentic', 'Meaningful'];
+const SLOGAN_WORDS = ['Anonymous', 'Honest', 'Authentic'];
 
 export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateClick }) => {
   const [currentWord, setCurrentWord] = useState(0);
@@ -56,7 +57,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateClick }) => {
           className="space-y-4"
         >
           <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent drop-shadow-lg">
-            ChittiLink
+            GhostNote
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground">
             Share your thoughts{' '}
@@ -74,10 +75,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateClick }) => {
           className="max-w-2xl mx-auto space-y-4"
         >
           <p className="text-base md:text-lg text-foreground/80 leading-relaxed">
-            Receive honest, anonymous messages from anyone. Share confessions, compliments, or secrets in a safe, private space.
+            Receive honest, anonymous messages from your friends. Share confessions, compliments, crushes, or secrets in a safe, judgment-free space.
           </p>
           <p className="text-sm text-muted-foreground">
-            Create your unique link, share it with friends, and start receiving meaningful messages today.
+            Create your unique link, share it with friends, and start receiving real, meaningful messages today.
           </p>
         </motion.div>
 
@@ -86,7 +87,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateClick }) => {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: ANIMATION_DURATION.medium, delay: 0.2 }}
-          className="pt-4"
+          className="pt-4 flex flex-col sm:flex-row gap-3 justify-center"
         >
           <Button
             size="lg"
@@ -96,6 +97,15 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onCreateClick }) => {
           >
             Create Your Link
           </Button>
+          <Link href="/login">
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-lg px-8 py-6"
+            >
+              Sign In
+            </Button>
+          </Link>
         </motion.div>
 
         {/* Features */}

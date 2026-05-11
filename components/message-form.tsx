@@ -159,10 +159,17 @@ export const MessageForm: React.FC<MessageFormProps> = ({ recipientId, onMessage
           </div>
 
           {/* Info */}
-          <div className="pt-4 border-t border-white/10">
+          <div className="pt-4 border-t border-white/10 space-y-3">
             <p className="text-xs text-muted-foreground text-center">
-              Your message will be sent anonymously. The recipient won't know who sent it.
+              Your message will be sent anonymously. The recipient won&apos;t know who sent it.
             </p>
+            <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 text-xs text-muted-foreground">
+              <ul className="space-y-1">
+                <li>Be genuine and authentic in your message</li>
+                <li>Keep it respectful and positive</li>
+                <li>Messages are permanently stored</li>
+              </ul>
+            </div>
           </div>
         </form>
       </div>
