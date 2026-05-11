@@ -5,9 +5,8 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { MessageForm } from '@/components/message-form';
 import { Button } from '@/components/ui/button';
-import { useUserData } from '@/hooks/useUserData';
 import { ANIMATION_DURATION } from '@/lib/constants';
-import { ArrowLeft, AlertCircle } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 interface PageProps {
   params: Promise<{
@@ -18,20 +17,18 @@ interface PageProps {
 export default function MessagePage({ params }: PageProps) {
   const [username, setUsername] = useState<string>('');
   const [loading, setLoading] = useState(true);
-  const [profileNotFound, setProfileNotFound] = useState(false);
-  const { getUserByUsername } = useUserData();
 
   useEffect(() => {
     // Unwrap params promise
-    params.then(({ username }) => {
-      setUsername(username);
-      const profile = getUserByUsername(username);
-      if (!profile) {
-        setProfileNotFound(true);
-      }
+    params.then(({ username: decodedUsername }) => {
+      const decodedName = decodeURIComponent(decodedUsername);
+      setUsername(decodedName);
+      setLoading(false);
+    }).catch((error) => {
+      console.error('Error loading params:', error);
       setLoading(false);
     });
-  }, [params, getUserByUsername]);
+  }, [params]);
 
   if (loading) {
     return (
@@ -43,44 +40,6 @@ export default function MessagePage({ params }: PageProps) {
         >
           <div className="text-4xl">✨</div>
           <p className="text-muted-foreground">Loading...</p>
-        </motion.div>
-      </main>
-    );
-  }
-
-  if (profileNotFound) {
-    return (
-      <main className="min-h-screen w-full flex items-center justify-center px-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: ANIMATION_DURATION.medium }}
-          className="max-w-md w-full text-center space-y-6"
-        >
-          <div className="flex justify-center">
-            <div className="text-6xl">❌</div>
-          </div>
-
-          <div className="space-y-3">
-            <h1 className="text-3xl font-bold">Link Not Found</h1>
-            <p className="text-muted-foreground">
-              Sorry, we couldn&apos;t find the ChittiLink you&apos;re looking for. The link may be expired or invalid.
-            </p>
-          </div>
-
-          <div className="glass neon-border-blue rounded-lg p-4 flex gap-3 text-left">
-            <AlertCircle className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
-            <div className="text-sm text-muted-foreground">
-              Make sure you copied the link correctly and try again.
-            </div>
-          </div>
-
-          <Link href="/">
-            <Button size="lg" className="w-full gap-2">
-              <ArrowLeft className="w-4 h-4" />
-              Go Home
-            </Button>
-          </Link>
         </motion.div>
       </main>
     );

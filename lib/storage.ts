@@ -62,14 +62,34 @@ export const createUserProfile = (userId: string, username: string): UserProfile
   return userProfile;
 };
 
+// Ensure user profile exists, create if not
+export const ensureUserProfile = (userId: string, username?: string): UserProfile => {
+  const state = getAppState();
+  let profile = state.profiles[userId];
+
+  if (!profile) {
+    // Create profile if it doesn't exist
+    profile = {
+      userId,
+      username: username || userId,
+      createdAt: Date.now(),
+      messages: [],
+    };
+    state.profiles[userId] = profile;
+    saveAppState(state);
+  }
+
+  return profile;
+};
+
 // Add message to user profile
 export const addMessage = (userId: string, message: Message): void => {
   const state = getAppState();
-  const profile = state.profiles[userId];
+  let profile = state.profiles[userId];
 
   if (!profile) {
-    console.error('Profile not found:', userId);
-    return;
+    // Create profile if it doesn't exist when receiving a message
+    profile = ensureUserProfile(userId);
   }
 
   profile.messages.push(message);

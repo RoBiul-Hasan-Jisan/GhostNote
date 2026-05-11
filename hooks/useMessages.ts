@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Message } from '@/types';
-import { getUserProfile, addMessage, deleteMessage } from '@/lib/storage';
+import { getUserProfile, addMessage, deleteMessage, ensureUserProfile } from '@/lib/storage';
 
 export const useMessages = (userId: string) => {
   const [messages, setMessages] = useState<Message[]>([]);
