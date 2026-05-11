@@ -5,30 +5,29 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { MessageList } from '@/components/message-list';
-import { useUserData } from '@/hooks/useUserData';
-import { useMessages } from '@/hooks/useMessages';
 import { getShareUrl, copyToClipboard } from '@/lib/helpers';
+import { useSBMessages } from '@/hooks/useSBMessages';
 import { Copy, Share2, LogOut, Heart, MessageCircle } from 'lucide-react';
 import { ANIMATION_DURATION } from '@/lib/constants';
 
 export default function Dashboard() {
-  const { profile, currentUserId } = useUserData();
-  const { messages, removeMessage } = useMessages(currentUserId || '');
+  const [username, setUsername] = useState<string>('');
+  const [loading, setLoading] = useState(true);
+  const { messages, removeMessage } = useSBMessages(username);
   const [copied, setCopied] = useState(false);
-  const [redirecting, setRedirecting] = useState(false);
 
-  // Redirect if no user logged in
+  // Get username from localStorage on mount
   useEffect(() => {
-    if (!currentUserId) {
-      setRedirecting(true);
-      const timer = setTimeout(() => {
-        window.location.href = '/';
-      }, 1000);
-      return () => clearTimeout(timer);
+    const storedUsername = localStorage.getItem('ghostnote-username');
+    if (!storedUsername) {
+      window.location.href = '/';
+    } else {
+      setUsername(storedUsername);
+      setLoading(false);
     }
-  }, [currentUserId]);
+  }, []);
 
-  if (redirecting || !profile || !currentUserId) {
+  if (loading || !username) {
     return (
       <main className="min-h-screen w-full flex items-center justify-center">
         <motion.div
@@ -36,14 +35,14 @@ export default function Dashboard() {
           animate={{ opacity: 1 }}
           className="text-center space-y-4"
         >
-          <div className="text-4xl">🔄</div>
-          <p className="text-muted-foreground">Redirecting to home...</p>
+          <div className="text-4xl">✨</div>
+          <p className="text-muted-foreground">Loading your dashboard...</p>
         </motion.div>
       </main>
     );
   }
 
-  const shareUrl = getShareUrl(profile.username);
+  const shareUrl = getShareUrl(username);
 
   const handleCopyLink = async () => {
     const success = await copyToClipboard(shareUrl);
@@ -99,7 +98,7 @@ export default function Dashboard() {
             <div>
               <h1 className="text-4xl md:text-5xl font-bold mb-2">
                 <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                  Welcome, {profile.username}
+                  Welcome, {username}
                 </span>
               </h1>
               <p className="text-muted-foreground">

@@ -4,10 +4,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { useMessages } from '@/hooks/useMessages';
 import { MESSAGE_TYPES, VALIDATION } from '@/lib/constants';
-import { generateMessageId, validateMessage } from '@/lib/helpers';
-import { MessageType, Message } from '@/types';
+import { validateMessage } from '@/lib/helpers';
+import { MessageType } from '@/types';
+import { addMessage, getUserProfileByUsername } from '@/lib/supabase-storage';
 import { Send } from 'lucide-react';
 import { ANIMATION_DURATION } from '@/lib/constants';
 
@@ -17,7 +17,6 @@ interface MessageFormProps {
 }
 
 export const MessageForm: React.FC<MessageFormProps> = ({ recipientId, onMessageSent }) => {
-  const { addNewMessage } = useMessages(recipientId);
   const [messageType, setMessageType] = useState<MessageType>('confession');
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(false);
@@ -38,15 +37,27 @@ export const MessageForm: React.FC<MessageFormProps> = ({ recipientId, onMessage
     setLoading(true);
 
     try {
-      const newMessage: Message = {
-        id: generateMessageId(),
-        type: messageType,
-        content,
-        timestamp: Date.now(),
-        createdAt: new Date().toLocaleDateString(),
-      };
+      // Get recipient's user ID from username
+      const recipientProfile = await getUserProfileByUsername(recipientId);
+      if (!recipientProfile) {
+        setError('Recipient not found');
+        setLoading(false);
+        return;
+      }
 
-      addNewMessage(newMessage);
+      // Add message to Supabase
+      const message = await addMessage(
+        recipientProfile.id,
+        content,
+        messageType as 'confession' | 'compliment' | 'crush' | 'secret'
+      );
+
+      if (!message) {
+        setError('Failed to send message. Please try again.');
+        setLoading(false);
+        return;
+      }
+
       setContent('');
       setSuccess(true);
       onMessageSent?.();
