@@ -7,6 +7,7 @@ import { MessageForm } from '@/components/message-form';
 import { Button } from '@/components/ui/button';
 import { ANIMATION_DURATION } from '@/lib/constants';
 import { ArrowLeft } from 'lucide-react';
+import { getUserProfileByUsername } from '@/lib/storage';
 
 interface PageProps {
   params: Promise<{
@@ -17,12 +18,18 @@ interface PageProps {
 export default function MessagePage({ params }: PageProps) {
   const [username, setUsername] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [userExists, setUserExists] = useState(true);
 
   useEffect(() => {
     // Unwrap params promise
     params.then(({ username: decodedUsername }) => {
       const decodedName = decodeURIComponent(decodedUsername);
       setUsername(decodedName);
+      
+      // Check if user exists
+      const userProfile = getUserProfileByUsername(decodedName);
+      setUserExists(userProfile !== null);
+      
       setLoading(false);
     }).catch((error) => {
       console.error('Error loading params:', error);
@@ -41,6 +48,38 @@ export default function MessagePage({ params }: PageProps) {
           <div className="text-4xl">✨</div>
           <p className="text-muted-foreground">Loading...</p>
         </motion.div>
+      </main>
+    );
+  }
+
+  // User not found
+  if (!userExists) {
+    return (
+      <main className="min-h-screen w-full px-4 py-16">
+        <div className="max-w-2xl mx-auto space-y-8">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: ANIMATION_DURATION.medium }}
+            className="text-center space-y-6"
+          >
+            <div className="text-6xl">👻</div>
+            <div className="space-y-2">
+              <h1 className="text-4xl font-bold">Oops! User Not Found</h1>
+              <p className="text-muted-foreground">
+                The user <span className="font-mono font-bold text-primary">{username}</span> doesn&apos;t exist.
+              </p>
+            </div>
+            <p className="text-muted-foreground max-w-md mx-auto">
+              Make sure you&apos;ve entered the correct link. Users can only receive messages on their unique GhostNote link.
+            </p>
+            <Link href="/">
+              <Button size="lg" className="gap-2">
+                Create Your Own Link
+              </Button>
+            </Link>
+          </motion.div>
+        </div>
       </main>
     );
   }
@@ -81,7 +120,7 @@ export default function MessagePage({ params }: PageProps) {
           </div>
 
           <div className="glass neon-border rounded-lg p-4 text-sm text-muted-foreground">
-            Your identity will remain completely anonymous. Only the message content will be shared.
+            Your identity will remain completely anonymous. Only the message content will be shared with {username}.
           </div>
         </motion.div>
 

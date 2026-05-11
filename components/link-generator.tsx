@@ -23,9 +23,15 @@ export const LinkGenerator: React.FC<LinkGeneratorProps> = ({ onLinksGenerated }
   const generateLink = async () => {
     setLoading(true);
     try {
-      const newUsername = generateUniqueUsername();
-      setUsername(newUsername);
-      createUser(newUsername, newUsername);
+      let finalUsername = username.trim();
+      
+      // If no username provided, generate one
+      if (!finalUsername) {
+        finalUsername = generateUniqueUsername();
+      }
+      
+      setUsername(finalUsername);
+      createUser(finalUsername, finalUsername);
       setGenerated(true);
       onLinksGenerated?.();
     } catch (error) {

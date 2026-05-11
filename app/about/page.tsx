@@ -54,7 +54,7 @@ export default function About() {
         >
           <motion.h1 variants={itemVariants} className="text-5xl font-bold">
             <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-              About ChittiLink
+              About GhostNote
             </span>
           </motion.h1>
           <motion.p variants={itemVariants} className="text-lg text-muted-foreground">
@@ -69,11 +69,11 @@ export default function About() {
           animate="visible"
           className="space-y-6"
         >
-          {/* What is ChittiLink */}
+          {/* What is GhostNote */}
           <motion.section variants={itemVariants} className="glass neon-border rounded-xl p-8">
-            <h2 className="text-2xl font-bold mb-4 text-primary">What is ChittiLink?</h2>
+            <h2 className="text-2xl font-bold mb-4 text-primary">What is GhostNote?</h2>
             <p className="text-foreground/80 leading-relaxed">
-              ChittiLink is a modern anonymous messaging platform designed to facilitate honest, authentic communication. Whether you want to share a confession, send a sincere compliment, express a secret crush, or reveal a hidden truth, ChittiLink provides a safe, private space for these messages.
+              GhostNote is a modern anonymous messaging platform designed to facilitate honest, authentic communication. Whether you want to share a confession, send a sincere compliment, express a secret crush, or reveal a hidden truth, GhostNote provides a safe, private space for these messages.
             </p>
           </motion.section>
 
@@ -154,7 +154,7 @@ export default function About() {
           <motion.section variants={itemVariants} className="glass neon-border-blue rounded-xl p-8 text-center">
             <h2 className="text-2xl font-bold mb-4">Ready to Get Started?</h2>
             <p className="text-foreground/80 mb-6">
-              Create your unique ChittiLink and start receiving meaningful, anonymous messages today.
+              Create your unique GhostNote link and start receiving meaningful, anonymous messages today.
             </p>
             <Link href="/">
               <Button size="lg" variant="secondary">

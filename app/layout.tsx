@@ -9,10 +9,10 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'ChittiLink - Share Anonymous Messages',
-  description: 'Send and receive honest, anonymous messages. Share confessions, compliments, or secrets in a safe space.',
-  keywords: ['anonymous', 'messages', 'feedback', 'confessions', 'private'],
-  creator: 'ChittiLink',
+  title: 'GhostNote - Anonymous Messages & Confessions',
+  description: 'Send and receive honest, anonymous messages. Share confessions, compliments, crushes, or secrets in a safe, judgment-free space.',
+  keywords: ['anonymous', 'messages', 'feedback', 'confessions', 'private', 'ghostnote'],
+  creator: 'GhostNote',
 }
 
 export const viewport: Viewport = {
