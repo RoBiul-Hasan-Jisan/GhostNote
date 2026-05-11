@@ -32,10 +32,17 @@ export const saveAppState = (state: AppState): void => {
   }
 };
 
-// Get user profile by userId
-export const getUserProfile = (userId: string): UserProfile | null => {
+// Get user profile by userId or username
+export const getUserProfile = (userIdentifier: string): UserProfile | null => {
   const state = getAppState();
-  return state.profiles[userId] || null;
+  
+  // Try direct lookup by userId first
+  if (state.profiles[userIdentifier]) {
+    return state.profiles[userIdentifier];
+  }
+  
+  // Then try lookup by username
+  return Object.values(state.profiles).find((p) => p.username === userIdentifier) || null;
 };
 
 // Get user profile by username
@@ -83,16 +90,24 @@ export const ensureUserProfile = (userId: string, username?: string): UserProfil
 };
 
 // Add message to user profile
-export const addMessage = (userId: string, message: Message): void => {
+export const addMessage = (userIdentifier: string, message: Message): void => {
   const state = getAppState();
-  let profile = state.profiles[userId];
+  
+  // Try to find by userId first, then by username
+  let profile = state.profiles[userIdentifier];
+  
+  if (!profile) {
+    // If not found by userId, search by username
+    profile = Object.values(state.profiles).find((p) => p.username === userIdentifier);
+  }
 
   if (!profile) {
     // Create profile if it doesn't exist when receiving a message
-    profile = ensureUserProfile(userId);
+    profile = ensureUserProfile(userIdentifier, userIdentifier);
   }
 
   profile.messages.push(message);
+  state.profiles[profile.userId] = profile;
   saveAppState(state);
 };
 

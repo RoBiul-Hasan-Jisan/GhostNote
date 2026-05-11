@@ -26,11 +26,12 @@ export default function MessagePage({ params }: PageProps) {
       const decodedName = decodeURIComponent(decodedUsername);
       setUsername(decodedName);
       
-      // Check if user exists
-      const userProfile = getUserProfileByUsername(decodedName);
-      setUserExists(userProfile !== null);
-      
-      setLoading(false);
+      // Check if user exists - with a small delay to ensure localStorage is ready
+      setTimeout(() => {
+        const userProfile = getUserProfileByUsername(decodedName);
+        setUserExists(userProfile !== null);
+        setLoading(false);
+      }, 100);
     }).catch((error) => {
       console.error('Error loading params:', error);
       setLoading(false);
