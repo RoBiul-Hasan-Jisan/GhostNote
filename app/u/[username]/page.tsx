@@ -7,7 +7,7 @@ import { MessageForm } from '@/components/message-form';
 import { Button } from '@/components/ui/button';
 import { ANIMATION_DURATION } from '@/lib/constants';
 import { ArrowLeft } from 'lucide-react';
-import { getUserProfileByUsername } from '@/lib/storage';
+import { getUserProfileByUsername } from '@/lib/supabase-storage';
 
 interface PageProps {
   params: Promise<{

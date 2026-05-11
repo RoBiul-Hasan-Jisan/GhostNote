@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useUserData } from '@/hooks/useUserData';
 import { generateUniqueUsername, copyToClipboard, getShareUrl } from '@/lib/helpers';
+import { createUser, usernameExists } from '@/lib/supabase-storage';
 import { Copy, Share2, RotateCcw } from 'lucide-react';
 import { ANIMATION_DURATION } from '@/lib/constants';
 
@@ -14,14 +14,15 @@ interface LinkGeneratorProps {
 }
 
 export const LinkGenerator: React.FC<LinkGeneratorProps> = ({ onLinksGenerated }) => {
-  const { createUser, currentUserId } = useUserData();
   const [username, setUsername] = useState<string>('');
   const [generated, setGenerated] = useState(false);
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string>('');
 
   const generateLink = async () => {
     setLoading(true);
+    setError('');
     try {
       let finalUsername = username.trim();
       
@@ -30,12 +31,31 @@ export const LinkGenerator: React.FC<LinkGeneratorProps> = ({ onLinksGenerated }
         finalUsername = generateUniqueUsername();
       }
       
+      // Check if username already exists
+      const exists = await usernameExists(finalUsername);
+      if (exists) {
+        setError('Username already taken. Please choose another one.');
+        setLoading(false);
+        return;
+      }
+      
+      // Create user in Supabase
+      const user = await createUser(finalUsername);
+      if (!user) {
+        setError('Failed to create account. Please try again.');
+        setLoading(false);
+        return;
+      }
+      
+      // Save username to localStorage for dashboard access
+      localStorage.setItem('ghostnote-username', finalUsername);
+      
       setUsername(finalUsername);
-      createUser(finalUsername, finalUsername);
       setGenerated(true);
       onLinksGenerated?.();
     } catch (error) {
       console.error('Failed to generate link:', error);
+      setError('An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -108,6 +128,12 @@ export const LinkGenerator: React.FC<LinkGeneratorProps> = ({ onLinksGenerated }
                 Leave empty to generate a random username
               </p>
             </div>
+
+            {error && (
+              <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 text-sm text-red-200">
+                {error}
+              </div>
+            )}
 
             <Button
               onClick={generateLink}
