@@ -19,6 +19,12 @@ export async function createUser(username: string): Promise<UserProfile | null> 
   try {
     const supabase = createClient()
     
+    // Check if environment variables are set
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      console.error('[v0] Missing Supabase environment variables. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your Vercel project settings.')
+      return null
+    }
+    
     const { data, error } = await supabase
       .from('users')
       .insert([{ username }])
@@ -26,7 +32,7 @@ export async function createUser(username: string): Promise<UserProfile | null> 
       .single()
 
     if (error) {
-      console.error('Error creating user:', error)
+      console.error('[v0] Error creating user:', error)
       return null
     }
 
@@ -36,7 +42,7 @@ export async function createUser(username: string): Promise<UserProfile | null> 
       createdAt: data.created_at,
     }
   } catch (error) {
-    console.error('Error creating user:', error)
+    console.error('[v0] Error creating user:', error)
     return null
   }
 }
@@ -46,6 +52,12 @@ export async function getUserProfileByUsername(username: string): Promise<UserPr
   try {
     const supabase = createClient()
     
+    // Check if environment variables are set
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      console.error('[v0] Missing Supabase environment variables. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY to your Vercel project settings.')
+      return null
+    }
+    
     const { data, error } = await supabase
       .from('users')
       .select('*')
@@ -53,7 +65,7 @@ export async function getUserProfileByUsername(username: string): Promise<UserPr
       .single()
 
     if (error) {
-      console.error('Error getting user:', error)
+      console.error('[v0] Error getting user:', error)
       return null
     }
 
@@ -63,7 +75,7 @@ export async function getUserProfileByUsername(username: string): Promise<UserPr
       createdAt: data.created_at,
     }
   } catch (error) {
-    console.error('Error getting user:', error)
+    console.error('[v0] Error getting user:', error)
     return null
   }
 }
